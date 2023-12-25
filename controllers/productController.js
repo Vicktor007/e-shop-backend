@@ -105,7 +105,7 @@ const fetchProducts = asyncHandler(async (req, res) => {
 
 const fetchProductById = asyncHandler(async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate("category", "name");
     if (product) {
       return res.json(product);
     } else {
@@ -121,7 +121,8 @@ const fetchProductById = asyncHandler(async (req, res) => {
 const fetchAllProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.find({})
-      .populate("category")
+      .populate("category",
+      "name")
       .limit(12)
       .sort({ createAt: -1 });
 
