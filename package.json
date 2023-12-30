@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "backend server",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node index.js",
     "backend": "nodemon backend/index.js",
