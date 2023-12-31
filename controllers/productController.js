@@ -21,7 +21,7 @@ const addProduct = asyncHandler(async (req, res) => {
         return res.json({ error: "Quantity is required" });
     }
 
-    const product = new Product({ ...req.fields });
+    const product = new Product({ user: req.user.id, ...req.fields });
     await product.save();
     res.json(product);
   } catch (error) {
@@ -55,6 +55,17 @@ const updateProductDetails = asyncHandler(async (req, res) => {
       { ...req.fields },
       { new: true }
     );
+
+    // if product doesnt exist
+  if (!product) {
+    res.status(404);
+    throw new Error("Product not found");
+  }
+  // Match product to its user
+  if (product.user.toString() !== req.user.id) {
+    res.status(401);
+    throw new Error("User not authorized");
+  }
 
     await product.save();
 
@@ -120,7 +131,7 @@ const fetchProductById = asyncHandler(async (req, res) => {
 
 const fetchAllProducts = asyncHandler(async (req, res) => {
   try {
-    const products = await Product.find({})
+    const products = await Product.find({user: req.user.id}).sort("-createdAt")
       .populate("category",
       "name")
       .limit(12)
