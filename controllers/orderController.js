@@ -80,13 +80,14 @@ const createOrder = async (req, res) => {
 };
 
 
-// const getAllOrders = async (req, res) => {
+const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find({productUser: req.user._id}).populate("user", "id username");
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+}
 
 const getUserOrders = async (req, res) => {
   try {
