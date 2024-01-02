@@ -31,39 +31,6 @@ const addProduct = asyncHandler(async (req, res) => {
 });
 
 
-// const createProduct = asyncHandler(async(req, res) =>{
-//   const {name, category, quantity, price, description, brand} = req.body
-
-//   // validation
-//   // Validation
-//   switch (true) {
-//     case !name:
-//       return res.json({ error: "Name is required" });
-//     case !brand:
-//       return res.json({ error: "Brand is required" });
-//     case !description:
-//       return res.json({ error: "Description is required" });
-//     case !price:
-//       return res.json({ error: "Price is required" });
-//     case !category:
-//       return res.json({ error: "Category is required" });
-//     case !quantity:
-//       return res.json({ error: "Quantity is required" });
-//   }
-
-//   // create product
-//   const product = await Product.create({
-//       user: req.user.id,
-//       name,
-//       brand,
-//       category,
-//       quantity,
-//       price,
-//       description,
-//   })
-//   res.status(201).json(product);
-// });
-
 const updateProductDetails = asyncHandler(async (req, res) => {
   try {
     const { name, description, price, category, quantity, brand } = req.fields;

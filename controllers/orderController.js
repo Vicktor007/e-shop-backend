@@ -26,6 +26,7 @@ function calcPrices(orderItems) {
   };
 }
 
+
 const createOrder = async (req, res) => {
   try {
     const { orderItems, shippingAddress, paymentMethod } = req.body;
@@ -53,7 +54,6 @@ const createOrder = async (req, res) => {
         ...itemFromClient,
         product: itemFromClient._id,
         price: matchingItemFromDB.price,
-        productUser: matchingItemFromDB.user, // Get the user from the Product model
         _id: undefined,
       };
     });
@@ -63,7 +63,7 @@ const createOrder = async (req, res) => {
 
     const order = new Order({
       orderItems: dbOrderItems,
-      user: req.user._id, // ID of the user placing the order
+      user: req.user._id,
       shippingAddress,
       paymentMethod,
       itemsPrice,
@@ -79,10 +79,9 @@ const createOrder = async (req, res) => {
   }
 };
 
-
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find({productUser: req.user._id}).populate("user", "id username");
+    const orders = await Order.find({}).populate("user", "id username");
     res.json(orders);
   } catch (error) {
     res.status(500).json({ error: error.message });
