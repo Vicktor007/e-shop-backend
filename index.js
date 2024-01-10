@@ -32,10 +32,10 @@ app.use(function(req, res, next) {
 });
 
 
-app.use(cors({
-  origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
-  credentials: true
-}));
+// app.use(cors({
+//   origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
+//   credentials: true
+// }));
 
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
