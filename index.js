@@ -26,17 +26,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
-});
+// app.use(function(req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+//   next();
+// });
 
 
 app.use(cors({
   origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
   credentials: true
 }));
+
+const __dirname = path.resolve();
+
+app.use("/uploads", express.static(path.join(__dirname, + "uploads")));
 
 app.use("/api/users", userRoutes);
 app.use("/api/category", categoryRoutes);
@@ -48,8 +52,6 @@ app.get("/api/config/paypal", (req, res) => {
   res.send({ clientId: process.env.PAYPAL_CLIENT_ID });
 });
 
-const __dirname = path.resolve();
 
-app.use("/uploads", express.static(path.join(__dirname, + "uploads")));
 
 app.listen(port, () => console.log(`Server running on port: ${port}`));
