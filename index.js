@@ -4,6 +4,11 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import fs from 'fs';
+import path from 'path';
+
+
+
 
 
 // Utiles
@@ -37,6 +42,13 @@ app.use(cors({
   origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
   credentials: true
 }));
+
+const dirPath = path.join(__dirname, 'uploads');
+
+if (!fs.existsSync(dirPath)) {
+  fs.mkdirSync(dirPath, { recursive: true });
+}
+
 
 const __dirname = path.resolve();
 
