@@ -43,14 +43,16 @@ app.use(cors({
   credentials: true
 }));
 
+
+
+
+const __dirname = path.resolve();
+
 const dirPath = path.join(__dirname, 'uploads');
 
 if (!fs.existsSync(dirPath)) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
-
-
-const __dirname = path.resolve();
 
 app.use("uploads", express.static(path.join(__dirname,  "uploads")));
 
