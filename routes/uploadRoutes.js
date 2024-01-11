@@ -5,6 +5,7 @@ dotenv.config();
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import asyncHandler from "../middlewares/asyncHandler.js";
 
 
 const router = express.Router();
@@ -66,17 +67,17 @@ const uploadSingleImage = upload.single("image");
 //   });
 // });
 
-const fileSizeFormatter = (bytes, decimal) => {
-  if (bytes === 0) {
-    return "0 Bytes";
-  }
-  const dm = decimal || 2;
-  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"];
-  const index = Math.floor(Math.log(bytes) / Math.log(1000));
-  return (
-    parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + " " + sizes[index]
-  );
-};
+// const fileSizeFormatter = (bytes, decimal) => {
+//   if (bytes === 0) {
+//     return "0 Bytes";
+//   }
+//   const dm = decimal || 2;
+//   const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"];
+//   const index = Math.floor(Math.log(bytes) / Math.log(1000));
+//   return (
+//     parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + " " + sizes[index]
+//   );
+// };
 
 // router.post("/", (req, res) => {
 //   uploadSingleImage(req, res, (err) => {
@@ -101,22 +102,44 @@ const fileSizeFormatter = (bytes, decimal) => {
 //   });
 // });
 
-router.post("/", (req, res) => {
-  uploadSingleImage(req, res, (err) => {
-    if (err) {
-      res.status(400).send({ message: err.message });
-    } else if (req.file) {
-      let fileData = req.file.path; // Save only the path of the file as per your schema
-      res.status(200).send({
-        message: "Image uploaded successfully",
-        image: fileData, // Send the path of the image
-      });
-    } else {
-      res.status(400).send({ message: "No image file provided" });
-    }
-  });
-});
+// router.post("/", asyncHandler(async(req, res) => {
+//   uploadSingleImage(req, res, (err) => {
+//     if (err) {
+//       res.status(400).send({ message: err.message });
+//     } else if (req.file) {
+//       let fileData = req.file.path; // Save only the path of the file as per your schema
+//       res.status(200).send({
+//         message: "Image uploaded successfully",
+//         image: fileData, // Send the path of the image
+//       });
+//     } else {
+//       res.status(400).send({ message: "No image file provided" });
+//     }
+//   });
+// }));
 
+router.post("/", asyncHandler(async (req, res) => {
+  try {
+    const fileData = await new Promise((resolve, reject) => {
+      uploadSingleImage(req, res, (err) => {
+        if (err) {
+          reject(err);
+        } else if (req.file) {
+          resolve(req.file.path); // Save only the path of the file as per your schema
+        } else {
+          reject(new Error("No image file provided"));
+        }
+      });
+    });
+
+    res.status(200).send({
+      message: "Image uploaded successfully",
+      image: fileData, // Send the path of the image
+    });
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
+}));
 
 
 export default router;
