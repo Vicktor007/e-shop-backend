@@ -1,17 +1,36 @@
 import path from "path";
 import express from "express";
-import multer from "multer";
+import dotenv from 'dotenv';
+dotenv.config();
+import multer from 'multer';
+import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads/");
+//   },
 
-  filename: (req, file, cb) => {
-    const extname = path.extname(file.originalname);
-    cb(null, `${file.fieldname}-${Date.now()}${extname}`);
+//   filename: (req, file, cb) => {
+//     const extname = path.extname(file.originalname);
+//     cb(null, `${file.fieldname}-${Date.now()}${extname}`);
+//   },
+// });
+
+cloudinary.config({
+  cloud_name: 'vickdawson',
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'E-shop',
+    public_id: (req, file) => new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname,
   },
 });
 
@@ -32,19 +51,72 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 const uploadSingleImage = upload.single("image");
 
+// router.post("/", (req, res) => {
+//   uploadSingleImage(req, res, (err) => {
+//     if (err) {
+//       res.status(400).send({ message: err.message });
+//     } else if (req.file) {
+//       res.status(200).send({
+//         message: "Image uploaded successfully",
+//         image: req.file.path,
+//       });
+//     } else {
+//       res.status(400).send({ message: "No image file provided" });
+//     }
+//   });
+// });
+
+const fileSizeFormatter = (bytes, decimal) => {
+  if (bytes === 0) {
+    return "0 Bytes";
+  }
+  const dm = decimal || 2;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "YB", "ZB"];
+  const index = Math.floor(Math.log(bytes) / Math.log(1000));
+  return (
+    parseFloat((bytes / Math.pow(1000, index)).toFixed(dm)) + " " + sizes[index]
+  );
+};
+
+// router.post("/", (req, res) => {
+//   uploadSingleImage(req, res, (err) => {
+//     if (err) {
+//       res.status(400).send({ message: err.message });
+//     } else if (req.file) {
+//       let fileData = {
+//         fileName: req.file.originalname,
+//         filePath: req.file.path,
+//         fileType: req.file.mimetype,
+//         fileSize: fileSizeFormatter(req.file.size, 2), // assuming fileSizeFormatter is a function you have defined elsewhere
+//         public_id: req.file.filename, // use filename as public_id
+//       }
+//       res.status(200).send({
+//         message: "Image uploaded successfully",
+//         image: req.file.path,
+//         fileData: fileData
+//       });
+//     } else {
+//       res.status(400).send({ message: "No image file provided" });
+//     }
+//   });
+// });
+
 router.post("/", (req, res) => {
   uploadSingleImage(req, res, (err) => {
     if (err) {
       res.status(400).send({ message: err.message });
     } else if (req.file) {
+      let fileData = req.file.path; // Save only the path of the file as per your schema
       res.status(200).send({
         message: "Image uploaded successfully",
-        image: `/${req.file.path}`,
+        image: fileData, // Send the path of the image
       });
     } else {
       res.status(400).send({ message: "No image file provided" });
     }
   });
 });
+
+
 
 export default router;

@@ -1,6 +1,7 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
 
+
 const addProduct = asyncHandler(async (req, res) => {
   try {
     const { name, description, price, category, quantity, brand } = req.fields;
@@ -29,6 +30,47 @@ const addProduct = asyncHandler(async (req, res) => {
     res.status(400).json(error.message);
   }
 });
+
+
+// const addProduct = asyncHandler(async (req, res) => {
+//   try {
+//     const { name, description, price, category, quantity, brand } = req.fields;
+
+//     // Validation
+//     switch (true) {
+//       case !name:
+//         return res.json({ error: "Name is required" });
+//       case !brand:
+//         return res.json({ error: "Brand is required" });
+//       case !description:
+//         return res.json({ error: "Description is required" });
+//       case !price:
+//         return res.json({ error: "Price is required" });
+//       case !category:
+//         return res.json({ error: "Category is required" });
+//       case !quantity:
+//         return res.json({ error: "Quantity is required" });
+//     }
+
+//     let fileData = {}
+//     if(req.file) {
+//         fileData = {
+//             fileName: req.file.originalname,
+//             filePath: req.file.path,
+//             fileType: req.file.mimetype,
+//             fileSize: fileSizeFormatter(req.file.size, 2), // assuming you have a fileSizeFormatter function
+//             public_id: req.file.filename, // use filename as public_id
+//         }
+//     }
+
+//     const product = await Product.create({ user: req.user.id, ...req.fields, image: fileData });
+//     // await product.save();
+//     res.json(product);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(400).json(error.message);
+//   }
+// });
 
 
 const updateProductDetails = asyncHandler(async (req, res) => {
