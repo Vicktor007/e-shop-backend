@@ -10,30 +10,30 @@ import asyncHandler from "../middlewares/asyncHandler.js";
 
 const router = express.Router();
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads/");
-//   },
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
 
-//   filename: (req, file, cb) => {
-//     const extname = path.extname(file.originalname);
-//     cb(null, `${file.fieldname}-${Date.now()}${extname}`);
-//   },
-// });
-
-cloudinary.config({
-  cloud_name: 'vickdawson',
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET
-});
-
-const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'E-shop',
-    public_id: (req, file) => new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname,
+  filename: (req, file, cb) => {
+    const extname = path.extname(file.originalname);
+    cb(null, `${file.fieldname}-${Date.now()}${extname}`);
   },
 });
+
+// cloudinary.config({
+//   cloud_name: 'vickdawson',
+//   api_key: process.env.API_KEY,
+//   api_secret: process.env.API_SECRET
+// });
+
+// const storage = new CloudinaryStorage({
+//   cloudinary: cloudinary,
+//   params: {
+//     folder: 'E-shop',
+//     public_id: (req, file) => new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname,
+//   },
+// });
 
 const fileFilter = (req, file, cb) => {
   const filetypes = /jpe?g|png|webp/;
@@ -52,20 +52,20 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 const uploadSingleImage = upload.single("image");
 
-// router.post("/", (req, res) => {
-//   uploadSingleImage(req, res, (err) => {
-//     if (err) {
-//       res.status(400).send({ message: err.message });
-//     } else if (req.file) {
-//       res.status(200).send({
-//         message: "Image uploaded successfully",
-//         image: req.file.path,
-//       });
-//     } else {
-//       res.status(400).send({ message: "No image file provided" });
-//     }
-//   });
-// });
+router.post("/", (req, res) => {
+  uploadSingleImage(req, res, (err) => {
+    if (err) {
+      res.status(400).send({ message: err.message });
+    } else if (req.file) {
+      res.status(200).send({
+        message: "Image uploaded successfully",
+        image: req.file.path,
+      });
+    } else {
+      res.status(400).send({ message: "No image file provided" });
+    }
+  });
+});
 
 // const fileSizeFormatter = (bytes, decimal) => {
 //   if (bytes === 0) {
@@ -118,28 +118,28 @@ const uploadSingleImage = upload.single("image");
 //   });
 // }));
 
-router.post("/", asyncHandler(async (req, res) => {
-  try {
-    const fileData = await new Promise((resolve, reject) => {
-      uploadSingleImage(req, res, (err) => {
-        if (err) {
-          reject(err);
-        } else if (req.file) {
-          resolve(req.file.path); // Save only the path of the file as per your schema
-        } else {
-          reject(new Error("No image file provided"));
-        }
-      });
-    });
+// router.post("/", asyncHandler(async (req, res) => {
+//   try {
+//     const fileData = await new Promise((resolve, reject) => {
+//       uploadSingleImage(req, res, (err) => {
+//         if (err) {
+//           reject(err);
+//         } else if (req.file) {
+//           resolve(req.file.path); // Save only the path of the file as per your schema
+//         } else {
+//           reject(new Error("No image file provided"));
+//         }
+//       });
+//     });
 
-    res.status(200).send({
-      message: "Image uploaded successfully",
-      image: fileData, // Send the path of the image
-    });
-  } catch (err) {
-    res.status(400).send({ message: err.message });
-  }
-}));
+//     res.status(200).send({
+//       message: "Image uploaded successfully",
+//       image: fileData, // Send the path of the image
+//     });
+//   } catch (err) {
+//     res.status(400).send({ message: err.message });
+//   }
+// }));
 
 
 export default router;
