@@ -70,6 +70,7 @@ const createOrder = async (req, res) => {
       taxPrice,
       shippingPrice,
       totalPrice,
+      newOrder: true
     });
 
     const createdOrder = await order.save();
@@ -165,6 +166,7 @@ const markOrderAsPaid = async (req, res) => {
     if (order) {
       order.isPaid = true;
       order.paidAt = Date.now();
+      
       order.paymentResult = {
         id: req.body.id,
         status: req.body.status,
@@ -188,6 +190,7 @@ const markOrderAsDelivered = async (req, res) => {
     const order = await Order.findById(req.params.id);
 
     if (order) {
+      order.newOrder = false;
       order.isDelivered = true;
       order.deliveredAt = Date.now();
 
