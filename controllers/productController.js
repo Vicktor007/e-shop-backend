@@ -25,6 +25,7 @@ const addProduct = asyncHandler(async (req, res) => {
     const product = new Product({ user: req.user.id, ...req.fields });
     await product.save();
     res.json(product);
+    // console.log(product);
   } catch (error) {
     console.log(error);
     res.status(400).json(error.message);
@@ -162,6 +163,7 @@ const fetchProductById = asyncHandler(async (req, res) => {
     const product = await Product.findById(req.params.id).populate("category", "name");
     if (product) {
       return res.json(product);
+      
     } else {
       res.status(404);
       throw new Error("Product not found");

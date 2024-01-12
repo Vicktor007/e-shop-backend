@@ -23,7 +23,11 @@ const productSchema = mongoose.Schema(
       ref: "User",
     },
     name: { type: String, required: true },
-    image: { type: String, required: true },
+    // image: { type: String, required: true },
+    image: {
+      type: Object,
+      default: {},
+    },
     brand: { type: String, required: true },
     quantity: { type: Number, required: true },
     category: { type: ObjectId, ref: "Category", required: true },
