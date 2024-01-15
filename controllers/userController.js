@@ -39,8 +39,6 @@ const createUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
-  console.log(email);
-  console.log(password);
 
   const existingUser = await User.findOne({ email });
 
@@ -52,7 +50,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (isPasswordValid) {
       const token= createToken(res, existingUser._id);
-      console.log(token)
+      
 
       res.status(201).json({
         _id: existingUser._id,
@@ -192,7 +190,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
 
   // Create Reset Token
   let resetToken = crypto.randomBytes(32).toString("hex") + user._id;
-  console.log(resetToken);
+  
 
   // Hash token before saving to DB
   const hashedToken = crypto
