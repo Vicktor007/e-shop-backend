@@ -54,11 +54,11 @@ const authenticate = asyncHandler(async (req, res, next) => {
       console.log(error);
       res.status(401);
       throw new Error(error.message);
-    }
-  } else {
-    res.status(401);
-    throw new Error("Not authorized, no token.");
-  }
+    }}
+  // } else {
+  //   res.status(401);
+  //   throw new Error("Not authorized, no token.");
+  // }
 });
 
 const authorizeAdmin = (req, res, next) => {
