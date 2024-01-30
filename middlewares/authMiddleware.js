@@ -34,3 +34,8 @@ const authorizeAdmin = (req, res, next) => {
   }
 };
 
+export {
+  authenticate,
+authorizeAdmin
+
+}
