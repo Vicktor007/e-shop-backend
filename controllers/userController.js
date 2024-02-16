@@ -54,8 +54,7 @@ res.cookie("token", token, {
     throw new Error("Invalid user data");
   }
 });
-
-
+ 
 
 
 // const loginUser = asyncHandler(async (req, res) => {
