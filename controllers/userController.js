@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
-import createToken from "../utils/createToken.js";
+import {generateToken, createToken} from "../utils/createToken.js";
 import sendEmail from "../utils/sendMail.js";
 import Token from "../models/tokenModel.js";
 
@@ -22,7 +22,7 @@ const createUser = asyncHandler(async (req, res) => {
 
   try {
     await newUser.save();
-    createToken(res, newUser._id);
+    generateToken(res, newUser._id);
 
     res.status(201).json({
       _id: newUser._id,
@@ -35,6 +35,42 @@ const createUser = asyncHandler(async (req, res) => {
     throw new Error("Invalid user data");
   }
 });
+
+
+
+
+// const loginUser = asyncHandler(async (req, res) => {
+//   const { email, password } = req.body;
+
+//   const existingUser = await User.findOne({ email });
+
+//   if (existingUser) {
+//     const isPasswordValid = await bcrypt.compare(
+//       password,
+//       existingUser.password
+//     );
+
+//     if (isPasswordValid) {
+//       const token = generateToken(res, existingUser._id);
+//       const dbToken = createToken(res, existingUser._id)
+
+//       // Save the token in the database
+//       existingUser.token = dbToken;
+//       await existingUser.save();
+
+//       res.status(201).json({
+//         _id: existingUser._id,
+//         username: existingUser.username,
+//         email: existingUser.email,
+//         isAdmin: existingUser.isAdmin,
+//         token: existingUser.token, // Send the token back to the client
+//       });
+//       console.log(res);
+//       return;
+//     }
+//   }
+// });
+
 
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -49,7 +85,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 
     if (isPasswordValid) {
-      const token= createToken(res, existingUser._id);
+      const token = generateToken(res, existingUser._id);
       
 
       res.status(201).json({
@@ -57,6 +93,7 @@ const loginUser = asyncHandler(async (req, res) => {
         username: existingUser.username,
         email: existingUser.email,
         isAdmin: existingUser.isAdmin,
+        token
       });
       return;
     }
