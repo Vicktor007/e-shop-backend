@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
-import {generateToken, createToken} from "../utils/createToken.js";
+import generateToken from "../utils/createToken.js";
 import sendEmail from "../utils/sendMail.js";
 import Token from "../models/tokenModel.js";
 import jwt from "jsonwebtoken"
@@ -92,8 +92,7 @@ const loginUser = asyncHandler(async (req, res) => {
     );
 
     if (isPasswordValid) {
-      // const token = generateToken(res, existingUser._id);
-      const token = createToken(existingUser._id);
+      const token = generateToken(res, existingUser._id);
 
       
       
@@ -111,7 +110,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
-  res.cookie("jwt", "", {
+  res.cookie("token", "", {
     path: "/",
         httpOnly: true,
         expires: new Date(0), 
