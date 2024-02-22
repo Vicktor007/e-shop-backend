@@ -18,6 +18,7 @@ import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import { loginUser } from "./controllers/userController.js";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -40,7 +41,22 @@ app.use(cors({
 }));
 
 
+app.post('/api/login', async (req, res) => {
+  // Forward the login request to the loginUser function
+  const response = await loginUser(req, res);
 
+  // Set the token as a cookie
+  res.cookie("jwt", response.data.token, {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  // Send the response to the client
+  res.json(response.data);
+});
 
 
 const __dirname = path.resolve();

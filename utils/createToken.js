@@ -23,7 +23,21 @@ const generateToken = (res, userId) => {
   return token;
 };
 
-export default generateToken
+
+
+
+const createToken = (userId) => {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+
+  return token;
+};
+
+export {createToken,
+  generateToken}
+
+
 
 
 // const createToken = (res, userId) => {
