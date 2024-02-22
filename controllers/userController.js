@@ -2,7 +2,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto"
-import  createToken from "../utils/createToken.js";
+// import {generateToken, createToken} from "../utils/createToken.js";
 import sendEmail from "../utils/sendMail.js";
 import Token from "../models/tokenModel.js";
 import jwt from "jsonwebtoken"
@@ -34,7 +34,7 @@ const createUser = asyncHandler(async (req, res) => {
 // Generate Token
 const token = generateToken(newUser._id);
 //  send HTTP-only cookie
-res.cookie("jwt", token, {
+res.cookie("token", token, {
     path: "/",
     httpOnly: true,
     expires: new Date(Date.now() + 1000 * 86400), //1 day
@@ -104,9 +104,16 @@ const loginUser = asyncHandler(async (req, res) => {
 
     if (isPasswordValid) {
       // const token = generateToken(res, existingUser._id);
-      const token = createToken(existingUser._id)
 
-      
+      const token = generateToken(existingUser._id);
+    //  send HTTP-only cookie
+    res.cookie("token", token, {
+        path: "/",
+        httpOnly: true,
+        expires: new Date(Date.now() + 1000 * 86400), //1 day
+        sameSite: "none",
+        secure: true
+    })
       
 
       res.status(201).json({
@@ -114,7 +121,7 @@ const loginUser = asyncHandler(async (req, res) => {
         username: existingUser.username,
         email: existingUser.email,
         isAdmin: existingUser.isAdmin,
-         token: token
+        token: token
       });
       return;
     }
@@ -122,7 +129,7 @@ const loginUser = asyncHandler(async (req, res) => {
 });
 
 const logoutCurrentUser = asyncHandler(async (req, res) => {
-  res.cookie("jwt", "", {
+  res.cookie("token", "", {
     path: "/",
         httpOnly: true,
         expires: new Date(0), 
