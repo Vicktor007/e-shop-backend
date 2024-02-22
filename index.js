@@ -32,14 +32,6 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 
 
-
-
-
-app.use(cors({
-  origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
-  credentials: true
-}));
-
 app.post('/api/login', async (req, res) => {
   // Forward the login request to the loginUser function
   const response = await loginUser(req, res);
@@ -56,6 +48,14 @@ app.post('/api/login', async (req, res) => {
   // Send the response to the client
   res.json(response.data);
 });
+
+
+app.use(cors({
+  origin: ["http://localhost:5173", "https://e-shop-frontend-beta.vercel.app"],
+  credentials: true
+}));
+
+
 
 
 
