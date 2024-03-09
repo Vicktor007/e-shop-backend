@@ -52,7 +52,7 @@ const authenticate = asyncHandler (async(req, res, next) => {
     }
 })
 
-module.exports = protect; 
+ 
 
 
 const authorizeAdmin = (req, res, next) => {
